@@ -11,7 +11,7 @@ pipeline {
     stage('Checkout') {
       steps {
         echo "📦 Checking out code from SCM..."
-        check
+        checkout scm
       }
     }
 
