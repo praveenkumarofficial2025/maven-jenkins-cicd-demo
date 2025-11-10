@@ -110,11 +110,6 @@ pipeline {
     stage('Cleanup') {
       steps {
         echo "Cleaning up Docker resources..."
-        sh '''
-          docker stop maven-demo || true
-          docker rm maven-demo || true
-          docker rmi $IMAGE_NAME:${BUILD_NUMBER} || true
-        '''
       }
     }
   }
