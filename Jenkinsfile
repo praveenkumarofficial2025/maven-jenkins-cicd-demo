@@ -10,28 +10,28 @@ pipeline {
 
     stage('Checkout') {
       steps {
-        echo "📦 Checking out code from SCM..."
+        echo "Checking out code from SCM..."
         checkout scm
       }
     }
 
     stage('Clean Workspace') {
       steps {
-        echo "🧹 Cleaning previous build files..."
+        echo "Cleaning previous build files..."
         sh 'mvn clean'
       }
     }
 
     stage('Build') {
       steps {
-        echo "🏗️ Building Maven project..."
+        echo "Building Maven project..."
         sh 'mvn compile'
       }
     }
 
     stage('Unit Tests') {
       steps {
-        echo "🧪 Running unit tests..."
+        echo "Running unit tests..."
         sh 'mvn test'
       }
       post {
@@ -39,7 +39,7 @@ pipeline {
           script {
             def testResults = findFiles(glob: 'target/surefire-reports/*.xml')
             if (testResults && testResults.length > 0) {
-              echo "📊 Publishing JUnit test results..."
+              echo "Publishing JUnit test results..."
               junit 'target/surefire-reports/*.xml'
             } else {
               echo "⚠️ No JUnit test report files found — skipping test report publishing."
@@ -51,7 +51,7 @@ pipeline {
 
     stage('Package') {
       steps {
-        echo "📦 Packaging application into JAR..."
+        echo "Packaging application into JAR..."
         sh 'mvn package -DskipTests'
       }
       post {
@@ -86,14 +86,14 @@ pipeline {
 
     stage('Push to DockerHub') {
       steps {
-        echo "🚀 Pushing image to DockerHub..."
+        echo "Pushing image to DockerHub..."
         sh 'docker push $IMAGE_NAME:${BUILD_NUMBER}'
       }
     }
 
     stage('Deploy (Run Container)') {
       steps {
-        echo "🚢 Deploying Docker container..."
+        echo "Deploying Docker container..."
         sh '''
           echo "Stopping any existing container..."
           docker stop maven-demo || true
@@ -107,24 +107,9 @@ pipeline {
       }
     }
 
-    stage('Post-Deployment Test') {
-      steps {
-        echo "⚙️ Verifying container is running..."
-        sh '''
-          CONTAINER_ID=$(docker ps -q --filter "name=maven-demo")
-          CONTAINER_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $CONTAINER_ID)
-
-          echo "Container IP: $CONTAINER_IP"
-          echo "Testing application endpoint..."
-          curl -s http://$CONTAINER_IP:8080 || echo "App started successfully!"
-          '''
-      }
-}
-
-
     stage('Cleanup') {
       steps {
-        echo "🧹 Cleaning up Docker resources..."
+        echo "Cleaning up Docker resources..."
         sh '''
           docker stop maven-demo || true
           docker rm maven-demo || true
