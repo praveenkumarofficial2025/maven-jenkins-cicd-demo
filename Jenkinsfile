@@ -10,38 +10,38 @@ pipeline {
 
     stage('Checkout') {
       steps {
-        echo "📦 Checking out code from SCM..."
+        echo "Checking out code from SCM..."
         checkout scm
       }
     }
 
     stage('Clean Workspace') {
       steps {
-        echo "🧹 Cleaning previous build files..."
+        echo "Cleaning previous build files..."
         sh 'mvn clean'
       }
     }
 
     stage('Build') {
       steps {
-        echo "🏗️ Building Maven project..."
+        echo "Building Maven project..."
         sh 'mvn compile'
       }
     }
 
     stage('Unit Tests') {
       steps {
-        echo "🧪 Running unit tests..."
+        echo "Running unit tests..."
         sh 'mvn test'
       }
       post {
         always {
           script {
             if (fileExists('target/surefire-reports')) {
-              echo "📊 Publishing JUnit test results..."
+              echo "Publishing JUnit test results..."
               junit 'target/surefire-reports/*.xml'
             } else {
-              echo "⚠️ No JUnit test report directory found — skipping test report publishing."
+              echo "No JUnit test report directory found — skipping test report publishing."
             }
           }
         }
@@ -50,7 +50,7 @@ pipeline {
 
     stage('Package') {
       steps {
-        echo "📦 Packaging application into JAR..."
+        echo "Packaging application into JAR..."
         sh 'mvn package -DskipTests'
       }
       post {
@@ -62,21 +62,21 @@ pipeline {
 
     stage('Static Code Analysis (Optional)') {
       steps {
-        echo "🔍 Running code analysis (Simulated)..."
+        echo "Running code analysis (Simulated)..."
         sh 'echo "Code quality check passed ✅"'
       }
     }
 
     stage('Build Docker Image') {
       steps {
-        echo "🐳 Building Docker image..."
+        echo "Building Docker image..."
         sh 'docker build -t $IMAGE_NAME:${BUILD_NUMBER} .'
       }
     }
 
     stage('DockerHub Login') {
       steps {
-        echo "🔐 Logging into DockerHub..."
+        echo "Logging into DockerHub..."
         sh '''
           echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin
         '''
@@ -85,14 +85,14 @@ pipeline {
 
     stage('Push to DockerHub') {
       steps {
-        echo "🚀 Pushing image to DockerHub..."
+        echo "Pushing image to DockerHub..."
         sh 'docker push $IMAGE_NAME:${BUILD_NUMBER}'
       }
     }
 
     stage('Deploy (Run Container)') {
       steps {
-        echo "🚢 Deploying Docker container..."
+        echo "Deploying Docker container..."
         sh '''
           echo "Stopping old container..."
           docker stop maven-demo || true
@@ -110,7 +110,7 @@ pipeline {
 
     stage('Cleanup') {
       steps {
-        echo "🧹 Cleaning up Docker resources..."
+        echo "Cleaning up Docker resources..."
         sh '''
           docker stop maven-demo || true
           docker rm maven-demo || true
