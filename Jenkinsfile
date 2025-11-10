@@ -95,14 +95,7 @@ pipeline {
       steps {
         echo "Deploying Docker container..."
         sh '''
-          echo "Stopping any existing container..."
-          docker stop maven-demo || true
-          docker rm maven-demo || true
-
-          echo "Starting new container on port 8081..."
-          docker run -d -p 8081:8080 --name maven-demo $IMAGE_NAME:${BUILD_NUMBER}
-          sleep 5
-          docker ps
+            docker logs $IMAGE_NAME:${BUILD_NUMBER}
         '''
       }
     }
