@@ -6,6 +6,6 @@ public class Application {
     }
 
     public String greet() {
-        return "Hello Jenkins!";
+        return "Hello Jenkins updated! ";
     }
 }
